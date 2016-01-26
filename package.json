@@ -3,14 +3,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha --harmony --require co-mocha $(find . -name \"*.spec.js\" -not -path \"./node_modules/*\")"
+    "test": "NODE_ENV=test mocha --harmony --require co-mocha $(find . -name \"*.spec.js\" -not -path \"./node_modules/*\")",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "release": {
+    "verifyConditions": {
+      "path": "./node_modules/semantic-release/dist/lib/plugin-noop.js"
+    }
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/emartech/koa-escher-auth.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Emarsys",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/emartech/koa-escher-auth/issues"
   },
