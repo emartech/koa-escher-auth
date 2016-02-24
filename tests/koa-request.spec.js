@@ -18,8 +18,8 @@ describe('Koa Escher Authentication Middleware suite', function() {
     this.sandbox.stub(Escher, 'create').returns(escherStub);
 
     app = koaApp();
-    app.use(getInterceptorMiddleware({ credentialScope: 'testScope' }));
-    app.use(getAuthenticatorMiddleware());
+    app.use(getInterceptorMiddleware());
+    app.use(getAuthenticatorMiddleware({ credentialScope: 'testScope' }));
   });
 
   it('should return with HTTP 401 in case of authentication error', function(done) {
