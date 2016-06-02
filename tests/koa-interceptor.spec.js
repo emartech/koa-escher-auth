@@ -1,7 +1,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var sinon = require('sinon');
 var ReadableStream = require('stream').Readable;
 var getMiddleware = require('../').interceptor;
 
@@ -35,15 +34,13 @@ describe('Koa Escher Request Interceptor Middleware', function() {
 
 
   beforeEach(function() {
-    /*eslint-disable*/
     next = function* () {};
-    /*eslint-enable*/
 
     requestBodyStream = new ReadableStream();
     requestBody = '    {"test":"json"}    ';
   });
 
-  
+
   describe('Promise', function() {
     it('should be placed onto the context', function* () {
       var context = {};
