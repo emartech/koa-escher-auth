@@ -30,7 +30,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
 
   var createContextWithEmptyBody = function() {
-    return createContext(Promise.resolve(''))
+    return createContext(Promise.resolve(''));
   };
 
 
@@ -40,10 +40,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
       keyPool: JSON.stringify([{ 'keyId': 'suite_cuda_v1', 'secret': 'testSecret', 'acceptOnly': 0 }])
     };
 
-    /*eslint-disable*/
-    next = function* () {
-    };
-    /*eslint-enable*/
+    next = function* () {};
 
     escherStub = {
       authenticate: this.sandbox.stub()
@@ -97,11 +94,9 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
     var nextCalled = false;
 
-    /*eslint-disable*/
     next = function*() {
       nextCalled = true;
     };
-    /*eslint-enable*/
 
     yield callMiddleware(context);
 
