@@ -1,28 +1,28 @@
 'use strict';
 
-var expect = require('chai').expect;
-var ReadableStream = require('stream').Readable;
-var getMiddleware = require('../').interceptor;
+let expect = require('chai').expect;
+let ReadableStream = require('stream').Readable;
+let getMiddleware = require('../').interceptor;
 
 
 
 describe('Koa Escher Request Interceptor Middleware', function() {
-  var next;
-  var requestBodyStream;
-  var requestBody;
+  let next;
+  let requestBodyStream;
+  let requestBody;
 
 
-  var callMiddleware = function(context) {
+  let callMiddleware = function(context) {
     return getMiddleware().call(context, next);
   };
 
 
-  var callPromise = function(context) {
+  let callPromise = function(context) {
     return context.escherData;
   };
 
 
-  var createContextWithRequestBody = function() {
+  let createContextWithRequestBody = function() {
     requestBodyStream.push(requestBody);
     requestBodyStream.push(null);
 
@@ -43,29 +43,33 @@ describe('Koa Escher Request Interceptor Middleware', function() {
 
   describe('Promise', function() {
     it('should be placed onto the context', function* () {
-      var context = {};
+      let context = {};
 
       yield callMiddleware(context);
 
       expect(callPromise(context)).to.be.instanceOf(Promise);
     });
 
-    it('should resolve with the original body when the data read from request stream', function*(done) {
+    it('should resolve with the original body when the data read from request stream', function*() {
       // arrange
-      var context = createContextWithRequestBody();
+      let context = createContextWithRequestBody();
 
       // assert
-      requestBodyStream.on('end', function() {
-        callPromise(context)
-          .then((data) => {
-            expect(data.toString()).to.eq(requestBody);
-            done();
-          })
-          .catch((ex) => done(ex));
+      let requestPromise = new Promise(function(resolve, reject) {
+        requestBodyStream.on('end', function() {
+          callPromise(context)
+            .then((data) => {
+              expect(data.toString()).to.eq(requestBody);
+              resolve();
+            })
+            .catch((ex) => reject(ex));
+        });
       });
+
 
       // act
       yield callMiddleware(context);
+      yield requestPromise;
     });
   });
 });
