@@ -34,7 +34,6 @@ let escherConfig = {
   ])
 };
 
-// escherAuth.authenticator(escherConfig)
 module.exports = controllerFactory.create(function(router) {
   router.post('/import-hds', escherAuth.authenticator(escherConfig), function*() {
     this.body = 'Hello world'; 
@@ -57,7 +56,6 @@ SUITE_ESCHER_KEY_POOL='{"keyId": "app-id_suite_v1", "secret": "app-id-secret", "
 let controllerFactory = require('boar-stack').lib.controllerFactory;
 let escherAuth = require('koa-escher-auth');
 
-// escherAuth.authenticator(escherConfig)
 module.exports = controllerFactory.create(function(router) {
   router.post('/import-hds', escherAuth.authenticator(), function*() {
     this.body = 'Hello world'; 
