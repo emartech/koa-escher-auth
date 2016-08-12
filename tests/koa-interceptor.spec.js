@@ -57,7 +57,7 @@ describe('Koa Escher Request Interceptor Middleware', function() {
 
       yield callMiddleware(context);
 
-      expect(yield requestPromise).to.eq(requestBody);
+      expect(requestPromise).to.eventually.eq(requestBody);
     });
   });
 });
