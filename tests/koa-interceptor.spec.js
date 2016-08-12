@@ -7,18 +7,16 @@ let getMiddleware = require('../').interceptor;
 
 
 describe('Koa Escher Request Interceptor Middleware', function() {
-  let next;
   let requestBodyStream;
-  let requestBody;
-
+  let requestBody = '    {"test":"json"}    ';
 
   let callMiddleware = function(context) {
-    return getMiddleware().call(context, next);
+    return getMiddleware().call(context, function*() {});
   };
 
 
   let callPromise = function(context) {
-    return context.escherData;
+    return context.escherData.then((data) => data.toString());
   };
 
 
@@ -34,12 +32,8 @@ describe('Koa Escher Request Interceptor Middleware', function() {
 
 
   beforeEach(function() {
-    next = function* () {};
-
     requestBodyStream = new ReadableStream();
-    requestBody = '    {"test":"json"}    ';
   });
-
 
   describe('Promise', function() {
     it('should be placed onto the context', function* () {
@@ -51,25 +45,19 @@ describe('Koa Escher Request Interceptor Middleware', function() {
     });
 
     it('should resolve with the original body when the data read from request stream', function*() {
-      // arrange
       let context = createContextWithRequestBody();
 
-      // assert
       let requestPromise = new Promise(function(resolve, reject) {
         requestBodyStream.on('end', function() {
           callPromise(context)
-            .then((data) => {
-              expect(data.toString()).to.eq(requestBody);
-              resolve();
-            })
-            .catch((ex) => reject(ex));
+            .then(resolve)
+            .catch(reject);
         });
       });
 
-
-      // act
       yield callMiddleware(context);
-      yield requestPromise;
+
+      expect(yield requestPromise).to.eq(requestBody);
     });
   });
 });
