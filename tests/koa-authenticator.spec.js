@@ -5,6 +5,7 @@ let expect = require('chai').expect;
 let sinon = require('sinon');
 let KeyPool = require('escher-keypool');
 let Escher = require('escher-auth');
+let AuthenticationError = require('../lib/error/authentication');
 
 describe('Koa Escher Request Authenticator Middleware', function() {
   let next;
@@ -62,7 +63,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
 
   it('should throw HTTP 401 in case of problem during request capture', function*() {
-    let error = new Error('Request capture error');
+    let error = new AuthenticationError('Request capture error');
     let rejectedData = Promise.reject(error);
     let context = createContext(rejectedData);
 
@@ -74,7 +75,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
 
   it('should throw HTTP 401 in case of authentication problem', function*() {
-    let error = new Error('Test escher error');
+    let error = new AuthenticationError('Test escher error');
     let resolvedData = Promise.resolve('test body');
     let context = createContext(resolvedData);
     escherStub.authenticate.throws(error);

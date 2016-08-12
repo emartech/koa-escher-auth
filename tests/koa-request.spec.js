@@ -31,6 +31,21 @@ describe('Koa Escher Authentication Middleware suite', function() {
       .expect(401, 'Test escher error', done);
   });
 
+  it('should return with HTTP 400 in case of application error', function(done) {
+    escherStub.authenticate.returns('test_escher_keyid');
+
+    /*eslint-disable*/
+    app.use(function*() {
+      this.throw('Test application error', 400);
+    });
+    /*eslint-enable*/
+
+    request(app.listen())
+      .post('/')
+      .send('{"foo": "bar"}')
+      .expect(400, 'Test application error', done);
+  });
+
   it('should run controller if request is a valid escher request', function(done) {
     escherStub.authenticate.returns('test_escher_keyid');
 
