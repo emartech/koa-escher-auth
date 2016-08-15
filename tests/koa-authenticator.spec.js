@@ -58,20 +58,9 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
     yield callMiddleware(context);
 
-    expect(context.throw).to.have.been.calledWith(401, sinon.match.any);
+    expect(context.throw).to.have.been.calledWith(sinon.match.any, 401);
   });
 
-
-  it('should throw HTTP 401 in case of problem during request capture', function*() {
-    let error = new AuthenticationError('Request capture error');
-    let rejectedData = Promise.reject(error);
-    let context = createContext(rejectedData);
-
-    yield callMiddleware(context);
-
-    expect(context.throw).to.have.been.calledWith(401, 'Request capture error');
-    expect(loggerStub.error).to.have.been.calledWith('authentication_request_error', 'Request capture error', error);
-  });
 
 
   it('should throw HTTP 401 in case of authentication problem', function*() {
@@ -82,9 +71,33 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
     yield callMiddleware(context);
 
-    expect(context.throw).to.have.been.calledWith(401, 'Test escher error');
+    expect(context.throw).to.have.been.calledWith('Test escher error', 401);
     expect(loggerStub.error).to.have.been.calledWith('authentication_request_error', 'Test escher error', error);
   });
+
+
+
+  it('should throw original error in case of problem during request', function*() {
+    let expectedErrorMessage = 'Request capture error';
+
+    let resolvedData = Promise.resolve('test body');
+    let context = createContext(resolvedData);
+
+    next = function*() {
+      throw Error(expectedErrorMessage);
+    };
+
+    try {
+      yield callMiddleware(context);
+    } catch (error) {
+      expect(error.message).to.be.eq(expectedErrorMessage);
+      expect(loggerStub.error).to.not.have.been.called;
+      return;
+    }
+
+    throw new Error('Should throw Error');
+  });
+
 
 
   it('should yield the "next" if there were no problem on authentication', function*() {
