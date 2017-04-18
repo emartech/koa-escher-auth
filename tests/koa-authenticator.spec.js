@@ -53,12 +53,15 @@ describe('Koa Escher Request Authenticator Middleware', function() {
   });
 
 
-  it('should throw HTTP 401 if context is invalid', function*() {
+  it('should throw error if context is invalid', function*() {
     let context = createContext();
 
-    yield callMiddleware(context);
-
-    expect(context.throw).to.have.been.calledWith(sinon.match.any, 401);
+    try {
+      yield callMiddleware(context);
+      throw new Error('should throw error');
+    } catch(err) {
+      expect(err.message).to.eql('Context is not decorated. Use interceptor middleware first.');
+    }
   });
 
 
