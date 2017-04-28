@@ -6,6 +6,7 @@ module.exports = {
 
   lib: {
     Authenticator: require('./lib/request-authenticator'),
-    Interceptor: require('./lib/request-interceptor')
+    Interceptor: require('./lib/request-interceptor'),
+    AuthenticationError: require('./lib/error/authentication')
   }
 };
