@@ -74,7 +74,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
     yield callMiddleware(context);
 
-    expect(context.throw).to.have.been.calledWith('Test escher error', 401);
+    expect(context.throw).to.have.been.calledWith(401, 'Test escher error');
     expect(loggerStub.error).to.have.been.calledWith('authentication_request_error', 'Test escher error', error);
   });
 
