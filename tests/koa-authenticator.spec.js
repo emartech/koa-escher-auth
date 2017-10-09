@@ -1,6 +1,6 @@
 'use strict';
 
-let getMiddleware = require('../').authenticator;
+let getMiddleware = require('../index').authenticator;
 let expect = require('chai').expect;
 let sinon = require('sinon');
 let KeyPool = require('escher-keypool');
@@ -53,20 +53,20 @@ describe('Koa Escher Request Authenticator Middleware', function() {
   });
 
 
-  it('should throw error if context is invalid', function*() {
+  it('should throw error if context is invalid', function *() {
     let context = createContext();
 
     try {
       yield callMiddleware(context);
       throw new Error('should throw error');
-    } catch(err) {
+    } catch (err) {
       expect(err.message).to.eql('Context is not decorated. Use interceptor middleware first.');
     }
   });
 
 
 
-  it('should throw HTTP 401 in case of authentication problem', function*() {
+  it('should throw HTTP 401 in case of authentication problem', function *() {
     let error = new AuthenticationError('Test escher error');
     let resolvedData = Promise.resolve('test body');
     let context = createContext(resolvedData);
@@ -75,18 +75,22 @@ describe('Koa Escher Request Authenticator Middleware', function() {
     yield callMiddleware(context);
 
     expect(context.throw).to.have.been.calledWith(401, 'Test escher error');
-    expect(loggerStub.error).to.have.been.calledWith('authentication_request_error', 'Test escher error', error);
+    expect(loggerStub.error).to.have.been.calledWith(
+      'authentication_request_error',
+      'Test escher error',
+      sinon.match.instanceOf(AuthenticationError).and(sinon.match.has('message', 'Test escher error'))
+    );
   });
 
 
 
-  it('should throw original error in case of problem during request', function*() {
+  it('should throw original error in case of problem during request', function *() {
     let expectedErrorMessage = 'Request capture error';
 
     let resolvedData = Promise.resolve('test body');
     let context = createContext(resolvedData);
 
-    next = function*() {
+    next = function *() {
       throw Error(expectedErrorMessage);
     };
 
@@ -103,13 +107,13 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
 
 
-  it('should yield the "next" if there were no problem on authentication', function*() {
+  it('should yield the "next" if there were no problem on authentication', function *() {
     let resolvedData = Promise.resolve('test body');
     let context = createContext(resolvedData);
 
     let nextCalled = false;
 
-    next = function*() {
+    next = function *() {
       nextCalled = true;
     };
 
@@ -120,7 +124,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
   });
 
 
-  it('should supply the request data to escher without modification', function*() {
+  it('should supply the request data to escher without modification', function *() {
     let context = createContext(Promise.resolve('  test body  '));
 
     yield callMiddleware(context);
@@ -132,7 +136,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
   });
 
 
-  it('should use the proper keys using keypool from configuration', function* () {
+  it('should use the proper keys using keypool from configuration', function *() {
     this.sandbox.stub(KeyPool, 'create').returns({
       getKeyDb: this.sandbox.stub().returns('testKey')
     });
@@ -148,7 +152,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
   describe('Escher library', function() {
 
-    it('should be initialized with the proper Escher config', function* () {
+    it('should be initialized with the proper Escher config', function *() {
       let fullConfig = {
         algoPrefix: 'EMS',
         vendorKey: 'EMS',

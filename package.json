@@ -24,7 +24,7 @@
   "homepage": "https://github.com/emartech/koa-escher-auth#readme",
   "dependencies": {
     "raw-body": "2.1.7",
-    "escher-auth": "0.3.0",
+    "escher-auth": "1.0.0",
     "escher-keypool": "1.2.1"
   },
   "devDependencies": {
