@@ -2,7 +2,7 @@
 
 let expect = require('chai').expect;
 let ReadableStream = require('stream').Readable;
-let getMiddleware = require('../').interceptor;
+let getMiddleware = require('../index').interceptor;
 
 
 
@@ -16,7 +16,7 @@ describe('Koa Escher Request Interceptor Middleware', function() {
 
 
   let callPromise = function(context) {
-    return context.escherData.then((data) => data.toString());
+    return context.escherData.then((data) => data.toString()).catch(err => { return err; });
   };
 
 
