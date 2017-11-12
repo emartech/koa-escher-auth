@@ -1,10 +1,10 @@
 'use strict';
 
-let Escher = require('escher-auth');
-let koaApp = require('koa');
-let request = require('supertest');
-let getInterceptorMiddleware = require('../index').interceptor;
-let getAuthenticatorMiddleware = require('../index').authenticator;
+const Escher = require('escher-auth');
+const koaApp = require('koa');
+const request = require('supertest');
+const getInterceptorMiddleware = require('../index').interceptor;
+const getAuthenticatorMiddleware = require('../index').authenticator;
 
 describe('Koa Escher Authentication Middleware suite', function() {
   let app;

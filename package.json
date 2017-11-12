@@ -25,21 +25,21 @@
   "dependencies": {
     "raw-body": "2.3.2",
     "escher-auth": "1.0.0",
-    "escher-keypool": "1.2.1"
+    "escher-keypool": "2.0.0"
   },
   "devDependencies": {
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
-    "co-mocha": "1.2.0",
-    "eslint": "4.8.0",
+    "co-mocha": "1.2.1",
+    "eslint": "4.11.0",
     "eslint-config-emarsys": "4.0.0",
     "koa": "1.2.1",
     "mocha": "4.0.1",
     "nock": "9.0.22",
     "pre-commit": "1.2.2",
     "semantic-release": "8.0.3",
-    "sinon": "4.0.1",
+    "sinon": "4.1.2",
     "sinon-chai": "2.14.0",
     "supertest": "3.0.0",
     "validate-commit-message": "3.0.1"

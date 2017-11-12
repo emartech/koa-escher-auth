@@ -1,26 +1,26 @@
 'use strict';
 
-let expect = require('chai').expect;
-let ReadableStream = require('stream').Readable;
-let getMiddleware = require('../index').interceptor;
+const expect = require('chai').expect;
+const ReadableStream = require('stream').Readable;
+const getMiddleware = require('../index').interceptor;
 
 
 
 describe('Koa Escher Request Interceptor Middleware', function() {
   let requestBodyStream;
-  let requestBody = '    {"test":"json"}    ';
+  const requestBody = '    {"test":"json"}    ';
 
-  let callMiddleware = function(context) {
+  const callMiddleware = function(context) {
     return getMiddleware().call(context, function*() {});
   };
 
 
-  let callPromise = function(context) {
+  const callPromise = function(context) {
     return context.escherData.then((data) => data.toString()).catch(err => { return err; });
   };
 
 
-  let createContextWithRequestBody = function() {
+  const createContextWithRequestBody = function() {
     requestBodyStream.push(requestBody);
     requestBodyStream.push(null);
 
@@ -37,7 +37,7 @@ describe('Koa Escher Request Interceptor Middleware', function() {
 
   describe('Promise', function() {
     it('should be placed onto the context', function* () {
-      let context = {};
+      const context = {};
 
       yield callMiddleware(context);
 
@@ -45,9 +45,9 @@ describe('Koa Escher Request Interceptor Middleware', function() {
     });
 
     it('should resolve with the original body when the data read from request stream', function*() {
-      let context = createContextWithRequestBody();
+      const context = createContextWithRequestBody();
 
-      let requestPromise = new Promise(function(resolve, reject) {
+      const requestPromise = new Promise(function(resolve, reject) {
         requestBodyStream.on('end', function() {
           callPromise(context)
             .then(resolve)
