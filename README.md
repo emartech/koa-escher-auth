@@ -51,7 +51,7 @@ the setup becomes even more easier.
 
 ```
 SUITE_ESCHER_CREDENTIAL_SCOPE='eu/app-id/ems_request'
-SUITE_ESCHER_KEY_POOL='{"keyId": "app-id_suite_v1", "secret": "app-id-secret", "acceptOnly": 0}'
+SUITE_ESCHER_KEY_POOL='[{"keyId": "app-id_suite_v1", "secret": "app-id-secret", "acceptOnly": 0}]'
 ```
 
 ```javascript
