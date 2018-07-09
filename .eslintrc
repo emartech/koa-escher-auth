@@ -14,5 +14,8 @@
   },
   "extends": [
     "emarsys"
-  ]
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2017
+  }
 }

@@ -7,28 +7,15 @@ This koa middleware allows you to restrict access to pages with Escher authentic
 ## Usage
 
 The middlewares will work only in the following order:
-1. Interceptor middleware (lib/koa-interceptor)
-2. Bodyparser from other sources (e.g. koa-bodyparser)
-3. Authenticator middleware (lib/koa-authenticator)
-
-### Setup the application
+1. A bodyparser defining rawBody on the request (e.g. koa-bodyparser)
+2. Authenticator middleware (lib/koa-authenticator)
 
 ```javascript
-let app = require('koa')();
-let BoarServer = require('boar-stack').app;
-let server = new BoarServer(app);
-let escherAuth = require('koa-escher-auth');
+const Koa = require('koa');
+const bodyParser = require('koa-bodyparser');
+const escherAuth = require('koa-escher-auth');
 
-server.addMiddleware(escherAuth.interceptor());
-server.addBodyParseMiddleware();
-...
-```
 
-### Add authentication to routes
-
-```javascript
-let controllerFactory = require('boar-stack').lib.controllerFactory;
-let escherAuth = require('koa-escher-auth');
 let escherConfig = {
   credentialScope: 'eu/app-id/ems_request',
   keyPool: JSON.stringify([
@@ -36,12 +23,12 @@ let escherConfig = {
   ])
 };
 
-module.exports = controllerFactory.create(function(router) {
-  router.post('/import-hds', escherAuth.authenticator(escherConfig), function*() {
-    this.body = 'Hello world'; 
-  });
+let app = new Koa();
+app.use(bodyParser());
+app.use(escherAuth.authenticator(escherConfig));
+app.use(function(ctx) {
+  ctx.body = 'Hello world';
 });
-
 ```
 
 ### Environment variables
@@ -55,19 +42,21 @@ SUITE_ESCHER_KEY_POOL='[{"keyId": "app-id_suite_v1", "secret": "app-id-secret", 
 ```
 
 ```javascript
-let controllerFactory = require('boar-stack').lib.controllerFactory;
-let escherAuth = require('koa-escher-auth');
+const Koa = require('koa');
+const bodyParser = require('koa-bodyparser');
+const escherAuth = require('koa-escher-auth');
 
-module.exports = controllerFactory.create(function(router) {
-  router.post('/import-hds', escherAuth.authenticator(), function*() {
-    this.body = 'Hello world'; 
-  });
+
+let app = new Koa();
+app.use(bodyParser());
+app.use(escherAuth.authenticator());
+app.use(function(ctx) {
+  ctx.body = 'Hello world';
 });
-
 ```
 
 ### Notes
 
 The keypool always has to be a valid JSON string.
 
-You are able to add other middlewares between interceptor and authenticator if you want.
+You are able to add other middlewares between bodyparser and authenticator if you want.
