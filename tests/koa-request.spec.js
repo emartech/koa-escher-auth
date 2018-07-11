@@ -69,4 +69,17 @@ describe('Koa Escher Authentication Middleware suite', function() {
       .expect(200, 'test message from controller', done);
   });
 
+
+  it('should handle get requests without raw body', function(done) {
+    escherStub.authenticate.returns('test_escher_keyid');
+
+    app.use(function(ctx) {
+      ctx.body = 'test message from controller';
+    });
+
+    request(server)
+      .get('/')
+      .expect(200, 'test message from controller', done);
+  });
+
 });
