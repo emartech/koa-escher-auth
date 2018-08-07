@@ -27,9 +27,10 @@ let app = new Koa();
 app.use(bodyParser());
 app.use(escherAuth.authenticator(escherConfig));
 app.use(function(ctx) {
-  ctx.body = 'Hello world';
+  ctx.body = `Hello world, ${ctx.escherAccessKeyId}!`;
 });
 ```
+The access key id used to authenticate the request will be available on the context as `escherAccessKeyId`
 
 ### Environment variables
 
