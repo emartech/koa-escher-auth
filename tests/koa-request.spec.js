@@ -43,8 +43,6 @@ describe('Koa Escher Authentication Middleware suite', function() {
 
 
   it('should return with the original error in case of application error', function(done) {
-    escherStub.authenticate.returns('test_escher_keyid');
-
     app.use(function(ctx) {
       ctx.throw(400, 'Test application error');
     });
@@ -57,8 +55,6 @@ describe('Koa Escher Authentication Middleware suite', function() {
 
 
   it('should run controller if request is a valid escher request', function(done) {
-    escherStub.authenticate.returns('test_escher_keyid');
-
     app.use(function(ctx) {
       ctx.body = 'test message from controller';
     });
@@ -70,9 +66,21 @@ describe('Koa Escher Authentication Middleware suite', function() {
   });
 
 
-  it('should handle get requests without raw body', function(done) {
-    escherStub.authenticate.returns('test_escher_keyid');
+  it('should assigns the access key id to the context returned by authenticate for valid requests', function(done) {
+    escherStub.authenticate.resolves('test_escher_keyid');
 
+    app.use(function(ctx) {
+      ctx.body = `keyId: "${ctx.escherAccessKeyId}"`;
+    });
+
+    request(server)
+      .post('/')
+      .send('{"foo": "bar"}')
+      .expect(200, 'keyId: "test_escher_keyid"', done);
+  });
+
+
+  it('should handle get requests without raw body', function(done) {
     app.use(function(ctx) {
       ctx.body = 'test message from controller';
     });
