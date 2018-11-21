@@ -1,6 +1,5 @@
 'use strict';
 
-const expect = require('chai').expect;
 const ReadableStream = require('stream').Readable;
 const getMiddleware = require('../index').interceptor;
 

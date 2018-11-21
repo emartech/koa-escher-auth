@@ -1,16 +1,12 @@
 'use strict';
 
-var sinon = require('sinon');
+const sinon = require('sinon');
+const chai = require('chai');
+chai.use(require('chai-as-promised'));
+chai.use(require('chai-subset'));
+chai.use(require('sinon-chai'));
 
 before(function() {
-  var chai = require('chai');
-  var sinonChai = require('sinon-chai');
-  var chaiSubset = require('chai-subset');
-  var chaiAsPromised = require('chai-as-promised');
-
-  chai.use(chaiAsPromised);
-  chai.use(chaiSubset);
-  chai.use(sinonChai);
 
   sinon.stub.returnsWithResolve = function(data) {
     return this.returns(Promise.resolve(data));
@@ -20,11 +16,13 @@ before(function() {
     return this.returns(Promise.reject(error));
   };
 
+  global.expect = chai.expect;
+  global.sinon = sinon;
 });
 
 
 beforeEach(function() {
-  this.sandbox = sinon.sandbox.create();
+  this.sandbox = sinon.createSandbox();
 });
 
 
