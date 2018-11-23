@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/emartech/koa-escher-auth#readme",
   "dependencies": {
-    "raw-body": "2.3.3",
     "escher-auth": "3.0.0",
     "escher-keypool": "2.0.2"
   },
@@ -30,6 +29,7 @@
     "eslint": "5.9.0",
     "eslint-config-emarsys": "5.1.0",
     "koa": "1.6.2",
+    "koa-bodyparser": "4.2.1",
     "mocha": "5.2.0",
     "nock": "10.0.2",
     "pre-commit": "1.2.2",

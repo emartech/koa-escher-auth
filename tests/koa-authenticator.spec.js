@@ -5,28 +5,26 @@ const KeyPool = require('escher-keypool');
 const Escher = require('escher-auth');
 const AuthenticationError = require('../lib/error/authentication');
 
+
 describe('Koa Escher Request Authenticator Middleware', function() {
   let next;
   let escherConfig;
   let escherStub;
   let loggerStub;
 
+
   const callMiddleware = function(context) {
-    return getMiddleware(escherConfig, loggerStub).call(context, next);
+    return getMiddleware(escherConfig, loggerStub)(context, next);
   };
 
 
-  const createContext = function(dataPromise) {
+  const createContext = function(data) {
     return {
-      escherData: dataPromise,
       throw: sinon.stub(),
-      request: {}
+      request: {
+        rawBody: data
+      }
     };
-  };
-
-
-  const createContextWithEmptyBody = function() {
-    return createContext(Promise.resolve(''));
   };
 
 
@@ -36,7 +34,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
       keyPool: JSON.stringify([{ 'keyId': 'suite_cuda_v1', 'secret': 'testSecret', 'acceptOnly': 0 }])
     };
 
-    next = function* () {};
+    next = sinon.stub();
 
     escherStub = {
       authenticate: this.sandbox.stub()
@@ -50,26 +48,28 @@ describe('Koa Escher Request Authenticator Middleware', function() {
   });
 
 
-  it('should throw error if context is invalid', function *() {
+  it('should throw error if context is invalid', async function() {
     const context = createContext();
 
     try {
-      yield callMiddleware(context);
-      throw new Error('should throw error');
+      await callMiddleware(context);
     } catch (err) {
-      expect(err.message).to.eql('Context is not decorated. Use interceptor middleware first.');
+      expect(err.message).to.eql('Context is not decorated. Use koa-bodyparser middleware first.');
+      expect(next).to.not.have.been.called;
+      return;
     }
+
+    throw new Error('should throw error');
   });
 
 
-
-  it('should throw HTTP 401 in case of authentication problem', function *() {
+  it('should throw HTTP 401 in case of authentication problem', async function() {
     const error = new AuthenticationError('Test escher error');
     const resolvedData = Promise.resolve('test body');
     const context = createContext(resolvedData);
     escherStub.authenticate.throws(error);
 
-    yield callMiddleware(context);
+    await callMiddleware(context);
 
     expect(context.throw).to.have.been.calledWith(401, 'Test escher error');
     expect(loggerStub.error).to.have.been.calledWith(
@@ -77,22 +77,20 @@ describe('Koa Escher Request Authenticator Middleware', function() {
       'Test escher error',
       sinon.match.instanceOf(AuthenticationError).and(sinon.match.has('message', 'Test escher error'))
     );
+    expect(next).to.not.have.been.called;
   });
 
 
-
-  it('should throw original error in case of problem during request', function *() {
+  it('should throw original error in case of problem during request', async function() {
     const expectedErrorMessage = 'Request capture error';
 
     const resolvedData = Promise.resolve('test body');
     const context = createContext(resolvedData);
 
-    next = function *() {
-      throw Error(expectedErrorMessage);
-    };
+    next.throws(new Error(expectedErrorMessage));
 
     try {
-      yield callMiddleware(context);
+      await callMiddleware(context);
     } catch (error) {
       expect(error.message).to.be.eq(expectedErrorMessage);
       expect(loggerStub.error).to.not.have.been.called;
@@ -103,28 +101,20 @@ describe('Koa Escher Request Authenticator Middleware', function() {
   });
 
 
+  it('should await the "next" if there were no problem on authentication', async function() {
+    const context = createContext('test body');
 
-  it('should yield the "next" if there were no problem on authentication', function *() {
-    const resolvedData = Promise.resolve('test body');
-    const context = createContext(resolvedData);
-
-    let nextCalled = false;
-
-    next = function *() {
-      nextCalled = true;
-    };
-
-    yield callMiddleware(context);
+    await callMiddleware(context);
 
     expect(escherStub.authenticate).to.have.been.called;
-    expect(nextCalled).to.eql(true);
+    expect(next).to.have.been.called;
   });
 
 
-  it('should supply the request data to escher without modification', function *() {
-    const context = createContext(Promise.resolve('  test body  '));
+  it('should supply the request data to escher without modification', async function() {
+    const context = createContext('  test body  ');
 
-    yield callMiddleware(context);
+    await callMiddleware(context);
 
     const expectedRequest = Object.create(context.request);
     expectedRequest.body = '  test body  ';
@@ -133,14 +123,12 @@ describe('Koa Escher Request Authenticator Middleware', function() {
   });
 
 
-  it('should use the proper keys using keypool from configuration', function *() {
+  it('should use the proper keys using keypool from configuration', async function() {
     this.sandbox.stub(KeyPool, 'create').returns({
       getKeyDb: this.sandbox.stub().returns('testKey')
     });
 
-    const context = createContextWithEmptyBody();
-
-    yield callMiddleware(context);
+    await callMiddleware(createContext(''));
 
     expect(KeyPool.create).to.have.been.calledWith(escherConfig.keyPool);
     expect(escherStub.authenticate).to.have.been.calledWithExactly(sinon.match.any, 'testKey');
@@ -149,7 +137,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
 
   describe('Escher library', function() {
 
-    it('should be initialized with the proper Escher config', function *() {
+    it('should be initialized with the proper Escher config', async function() {
       const fullConfig = {
         algoPrefix: 'EMS',
         vendorKey: 'EMS',
@@ -158,12 +146,11 @@ describe('Koa Escher Request Authenticator Middleware', function() {
         credentialScope: 'testScope'
       };
 
-      yield callMiddleware(createContextWithEmptyBody());
+      await callMiddleware(createContext(''));
 
       expect(Escher.create).to.have.been.calledWith(fullConfig);
     });
 
   });
-
 
 });
