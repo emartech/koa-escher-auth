@@ -1,8 +1,6 @@
 'use strict';
 
 const getMiddleware = require('../index').authenticator;
-const expect = require('chai').expect;
-const sinon = require('sinon');
 const KeyPool = require('escher-keypool');
 const Escher = require('escher-auth');
 const AuthenticationError = require('../lib/error/authentication');
