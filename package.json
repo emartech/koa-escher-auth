@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/emartech/koa-escher-auth#readme",
   "dependencies": {
-    "escher-auth": "3.0.0",
+    "escher-auth": "^3.2.1",
     "escher-keypool": "2.0.2"
   },
   "devDependencies": {
@@ -26,15 +26,15 @@
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
     "co-mocha": "1.2.2",
-    "eslint": "5.9.0",
+    "eslint": "5.11.1",
     "eslint-config-emarsys": "5.1.0",
     "koa": "2.6.2",
     "koa-bodyparser": "4.2.1",
     "mocha": "5.2.0",
     "nock": "10.0.2",
     "pre-commit": "1.2.2",
-    "semantic-release": "15.12.1",
-    "sinon": "7.1.1",
+    "semantic-release": "^15.13.16",
+    "sinon": "7.3.2",
     "sinon-chai": "3.2.0",
     "supertest": "3.3.0",
     "validate-commit-message": "3.0.1"
