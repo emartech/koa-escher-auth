@@ -91,14 +91,24 @@ describe('Koa Escher Authentication Middleware suite', function() {
   });
 
 
-  it('should handle delete requests without raw body', function(done) {
-    app.use(function(ctx) {
+  it('should handle delete requests without raw body', function (done) {
+    app.use(function (ctx) {
       ctx.body = 'valid body';
     });
 
     request(server)
       .delete('/')
       .expect(200, 'valid body', done);
+  });
+
+
+  it('should handle head requests without raw body', function (done) {
+    app.use(function (ctx) {
+      ctx.body = 'this response body will not be returned for a HEAD request';
+    });
+    request(server)
+      .head('/')
+      .expect(200, undefined, done);
   });
   
 });
