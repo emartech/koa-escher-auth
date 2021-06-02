@@ -65,6 +65,16 @@ describe('Koa Escher Authentication Middleware suite', function() {
       .expect(200, 'test message from controller', done);
   });
 
+  it('should run controller if request is a valid escher post request without body', function(done) {
+    app.use(function(ctx) {
+      ctx.body = 'test message from controller';
+    });
+
+    request(server)
+      .post('/')
+      .expect(200, 'test message from controller', done);
+  });
+
 
   it('should assigns the access key id to the context returned by authenticate for valid requests', function(done) {
     escherStub.authenticate.resolves('test_escher_keyid');
@@ -91,8 +101,8 @@ describe('Koa Escher Authentication Middleware suite', function() {
   });
 
 
-  it('should handle delete requests without raw body', function (done) {
-    app.use(function (ctx) {
+  it('should handle delete requests without raw body', function(done) {
+    app.use(function(ctx) {
       ctx.body = 'valid body';
     });
 
@@ -102,13 +112,13 @@ describe('Koa Escher Authentication Middleware suite', function() {
   });
 
 
-  it('should handle head requests without raw body', function (done) {
-    app.use(function (ctx) {
+  it('should handle head requests without raw body', function(done) {
+    app.use(function(ctx) {
       ctx.body = 'this response body will not be returned for a HEAD request';
     });
     request(server)
       .head('/')
       .expect(200, undefined, done);
   });
-  
+
 });

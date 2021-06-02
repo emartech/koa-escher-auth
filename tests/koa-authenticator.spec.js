@@ -22,6 +22,7 @@ describe('Koa Escher Request Authenticator Middleware', function() {
     return {
       throw: sinon.stub(),
       request: {
+        body: data,
         rawBody: data
       }
     };
