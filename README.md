@@ -1,6 +1,4 @@
 # koa-escher-auth
-[![Dependency Status](https://david-dm.org/emartech/koa-escher-auth.svg)](https://david-dm.org/emartech/koa-escher-auth)
-[![devDependency Status](https://david-dm.org/emartech/koa-escher-auth/dev-status.svg)](https://david-dm.org/emartech/koa-escher-auth#info=devDependencies)
 
 This koa middleware allows you to restrict access to pages with Escher authentication.
 
